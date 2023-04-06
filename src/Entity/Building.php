@@ -18,8 +18,8 @@ class Building
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column]
-    private ?int $zipcode = null;
+    #[ORM\Column(length: 10)]
+    private ?string $zipcode = null;
 
     #[ORM\ManyToMany(targetEntity: organisation::class, inversedBy: 'buildings')]
     private Collection $organisation;
@@ -50,12 +50,12 @@ class Building
         return $this;
     }
 
-    public function getZipcode(): ?int
+    public function getZipcode(): ?string
     {
         return $this->zipcode;
     }
 
-    public function setZipcode(int $zipcode): self
+    public function setZipcode(string $zipcode): self
     {
         $this->zipcode = $zipcode;
 
