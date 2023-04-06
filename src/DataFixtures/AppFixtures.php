@@ -7,25 +7,37 @@ use App\Entity\Organisation;
 use App\Entity\Room;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 
 class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 20; $i++) {
-            $organisation = new Organisation;
-            $organisation->setName('Organisation ' . $i);
-            $manager->persist($organisation);
+        $faker = Factory::create();
 
-            $building = new Building;
-            $building->setName('Building' . $i);
-            $building->setZipcode(59000 + $i);
-            $manager->persist($building);
+        // Création de 10 organisations
+        for ($i = 0; $i < 10; $i++) {
+            $organization = new Organisation();
+            $organization->setName($faker->company());
+            $manager->persist($organization);
 
-            $room = new Room;
-            $room->setName('Room' . $i);
-            $room->setNumberOfPeople(rand(1, 20));
-            $manager->persist($room);
+            // Création de 5 bâtiments pour chaque organisation
+            for ($j = 0; $j < 5; $j++) {
+                $building = new Building();
+                $building->setName($faker->company());
+                $building->setZipcode($faker->postcode());
+                $building->addOrganisation($organization);
+                $manager->persist($building);
+
+                // Création de 10 pièces pour chaque bâtiment
+                for ($k = 0; $k < 10; $k++) {
+                    $room = new Room();
+                    $room->setName($faker->word());
+                    $room->setNumberOfPeople($faker->numberBetween(0, 20));
+                    $room->setBuilding($building);
+                    $manager->persist($room);
+                }
+            }
         }
 
         $manager->flush();
